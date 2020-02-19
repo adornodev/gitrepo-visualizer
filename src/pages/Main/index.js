@@ -1,7 +1,19 @@
 import React, { Component } from 'react';
 import { Keyboard } from 'react-native';
 import '../../config/ReactotronConfig';
-import { Container, Form, Input, SubmitButton } from './styles';
+import {
+  Container,
+  Form,
+  Input,
+  SubmitButton,
+  List,
+  Avatar,
+  User,
+  Name,
+  Bio,
+  ProfileButton,
+  ProfileButtonText,
+} from './styles';
 import api from '../../services/api';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -48,6 +60,21 @@ export default class Main extends Component {
             <Icon name="person-add" size={20} color="#FFF" />
           </SubmitButton>
         </Form>
+
+        <List
+          data={users}
+          keyExtractor={user => user.login}
+          renderItem={({ item }) => (
+            <User>
+              <Avatar source={{ uri: item.avatar }} />
+              <Name>{item.name}</Name>
+              {item.bio && <Bio>{item.bio}</Bio>}
+              <ProfileButton onPress={() => {}}>
+                <ProfileButtonText>Ver perfil</ProfileButtonText>
+              </ProfileButton>
+            </User>
+          )}
+        />
       </Container>
     );
   }
