@@ -32,6 +32,7 @@ export default class User extends Component {
   state = {
     stars: [],
     loading: false,
+    page: 1,
   };
 
   async componentDidMount() {
@@ -40,10 +41,37 @@ export default class User extends Component {
 
     this.setState({ loading: true });
 
-    const response = await api.get(`/users/${user.login}/starred`);
+    const response = await api.get(`/users/${user.login}/starred?page=1`);
 
     this.setState({ stars: response.data, loading: false });
   }
+
+  loadMore = async () => {
+    const { navigation } = this.props;
+    const { stars, page } = this.state;
+
+    const newPage = page + 1;
+
+    const user = navigation.getParam('user');
+
+    const response = await api.get(
+      `/users/${user.login}/starred?page=${newPage}`
+    );
+
+    this.setState({ stars: [...stars, ...response.data], page: newPage });
+  };
+
+  refreshList = async () => {
+    const { navigation } = this.props;
+
+    this.setState({ loading: true });
+
+    const user = navigation.getParam('user');
+
+    const response = await api.get(`/users/${user.login}/starred?page=1`);
+
+    this.setState({ stars: response.data, page: 1, loading: false });
+  };
 
   render() {
     const { navigation } = this.props;
@@ -55,7 +83,7 @@ export default class User extends Component {
         <Header>
           <Avatar source={{ uri: user.avatar }} />
           <Name>{user.name}</Name>
-          <Bio>{user.bio}</Bio>
+          {user.bio && <Bio>{user.bio}</Bio>}
         </Header>
 
         {loading ? (
@@ -63,7 +91,11 @@ export default class User extends Component {
         ) : (
           <Stars
             data={stars}
+            onEndReached={this.loadMore}
+            onEndReachedThreshold={0.3}
             keyExtractor={star => String(star.id)}
+            onRefresh={this.refreshList}
+            refreshing={loading}
             renderItem={({ item }) => (
               <Starred>
                 <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
