@@ -3,6 +3,7 @@ import '../../config/ReactotronConfig';
 import api from '../../services/api';
 import PropTypes from 'prop-types';
 import { ActivityIndicator } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import {
   Container,
@@ -16,6 +17,7 @@ import {
   Info,
   Title,
   Author,
+  RepositoryButton,
 } from './styles';
 
 export default class User extends Component {
@@ -73,6 +75,12 @@ export default class User extends Component {
     this.setState({ stars: response.data, page: 1, loading: false });
   };
 
+  handleNavigate = repository => {
+    const { navigation } = this.props;
+
+    navigation.navigate('Repository', { repository });
+  };
+
   render() {
     const { navigation } = this.props;
     const user = navigation.getParam('user');
@@ -103,6 +111,10 @@ export default class User extends Component {
                   <Title>{item.name}</Title>
                   <Author>{item.owner.login}</Author>
                 </Info>
+
+                <RepositoryButton onPress={() => this.handleNavigate(item)}>
+                  <Icon name="search" size={25} color="#FFF" />
+                </RepositoryButton>
               </Starred>
             )}
           />
