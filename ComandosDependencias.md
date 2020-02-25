@@ -35,3 +35,7 @@ yarn add react-native-vector-icons
 yarn add axios
 
 yarn add @react-native-community/async-storage
+
+yarn add react-native-webview
+
+react-native link react-native-webview # react-native link
